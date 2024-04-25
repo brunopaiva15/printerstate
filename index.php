@@ -69,6 +69,30 @@ foreach ($oids as $key => $oid) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>État de l'imprimante</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .progress-bar {
+            transition: width 0.8s ease-in-out;
+            /* Animation de 2 secondes pour la largeur */
+        }
+
+        /* Initial state of the progress bar */
+        .progress-bar-initial {
+            width: 0%;
+            /* Démarre de 0% */
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    const targetWidth = bar.getAttribute('data-target-width');
+                    bar.style.width = targetWidth; // Déclenche l'animation avec un délai
+                    bar.classList.remove('progress-bar-initial'); // Enlève l'état initial pour permettre l'animation
+                }, index * 90); // Décalage de 500 ms par barre
+            });
+        });
+    </script>
 </head>
 
 <body class="bg-gray-100 p-5 flex justify-center items-center min-h-screen">
@@ -94,7 +118,7 @@ foreach ($oids as $key => $oid) {
                 <?php if (!($infoImprimante[$key] == "-" && ($key == 'magenta' || $key == 'jaune'))) : ?>
                     <p><?= htmlspecialchars($infoImprimante['modele_' . $key]) ?></p>
                     <div class="w-full bg-gray-200 rounded-full">
-                        <div class="bg-<?= $key == 'cyan' && $changeCyanToGray ? 'gray-500' : ($infoImprimante[$key] == "-" ? 'black' : $color) ?> text-xs font-medium text-white text-center p-0.5 leading-none rounded-full" style="width: <?= intval($infoImprimante[$key]) ?>%;">
+                        <div class="bg-<?= $key == 'cyan' && $changeCyanToGray ? 'gray-500' : ($infoImprimante[$key] == "-" ? 'black' : $color) ?> text-xs font-medium text-white text-center p-0.5 leading-none rounded-full progress-bar progress-bar-initial" data-target-width="<?= intval($infoImprimante[$key]) ?>%">
                             <?= intval($infoImprimante[$key]) ?>%
                         </div>
                     </div>
